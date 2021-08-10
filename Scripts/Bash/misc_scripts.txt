@@ -1,0 +1,66 @@
+hmmsearch --tblout hmmsearch_result_yucatanmarine_VK_3300001969.tbl -o hmmsearch_result_yucatanmarine_VK_3300001969.out catallgenes.hmm yucatanmarine_VK_3300001969.faa --cpu 10
+
+diamond makedb --in ./bioreactor/metaerg_out/data/cds.faa -d ./bioreactor/metaerg_out/new_bioreactor_cds.faa --threads 20
+
+nohup diamond blastp --db ./bioreactor/metaerg_out/new_bioreactor_cds.dmnd --query bioreactor/metaerg_out/old_cds.names.faa --out ./bioreactor/metaerg_out/bioreactor_cds_mapping.out --outfmt 6 --query-cover 90 --max-target-seqs 1 --id 90 --threads 20&
+
+python3 ~/scripts/PyScripts/samtofastq.py -l list_of_crisprcas_contigs.txt -s ../Mapping/T2_10_3_Nitrate.sam -f1 ../Fastq_files/T2_10_3_Nitrate.qc.1.fastq -f2 ../Fastq_files/T2_10_3_Nitrate.qc.2.fastq -o1 ../Mapping/Mapping2cyanoWGS/Mapping2cyanoWGS.T2_10_3_Nitrate.1.fastq -o2 ../Mapping/Mapping2cyanoWGS/Mapping2cyanoWGS.T2_10_3_Nitrate.2.fastq
+
+
+
+nohup bbmap.sh ref=/gpfs/home/mstrous/cyano/pha.fna in=allsamples.1.fastq in2=allsamples.2.fastq out=./MappingResults/allsamplesmappedtoWGS.sam covstats=./MappingResults/allsamplesmappedtoWGS_covstats.txt scafstats=./MappingResults/allsamplesmappedtoWGS_scafstats.txt t=20&
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_result_Group39_con1_VK_bmoZ_new.tbl ../../HMMs_catalytic/Group39_con1_VK_bmoZ_soluble.hmm ../../all.diamond.sequences.fasta&
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_result_antarcticOcean_VK_3300029631.tbl -o hmmsearch_result_antarcticOcean_VK_3300029631.out catallgenes.hmm antarcticOcean_VK_3300029631.faa&
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_result_childgut_VK_3300023490.tbl -o hmmsearch_result_childgut_VK_3300023490.out catallgenes.hmm childgut_VK_3300023490.faa&
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_result_coral_VK_3300010032.tbl -o hmmsearch_result_coral_VK_3300010032.out catallgenes.hmm coral_VK_3300010032.faa&
+
+nohup hmmsearch --cpu 10 --tblout VK/hmmsearch_result_HCenrichmentnapdc_AC_SRR634687.tbl -o VK/hmmsearch_result_HCenrichmentnapdc_AC_SRR634687.out ../catallgenes.hmm ../HCenrichmentnapdc_AC_SRR634687.faa&
+
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_result_EXP_5.tbl -o hmmsearch_result_EXP_5.out ../../Final_HMMs_for_testing/renamed_hmms/catallgenes.hmm all_EXP_4.fasta&
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_result_EXP_5.tbl -o hmmsearch_result_EXP_5.out ../../Final_HMMs_for_testing/renamed_hmms/catallgenes.hmm all_EXP_4.fasta&
+cd 
+
+Group10_con1_SB_bmoB_TmoB_benzene.hmm
+Group13_con1_SB_bmoA_TmoA_benzene.hmm
+Group4_con2_AP_AbcA_1.hmm
+Group4_con2_AP_AbcA_2.hmm
+
+#for prodigal
+/gpfs/ebg_gmb/atri/Project-2-Scotian_Slope_Piston_Core_0041/02_COASSEMBLY/S1-S8-final.contigs.fa
+
+prodigal -i /gpfs/ebg_gmb/atri/Project-2-Scotian_Slope_Piston_Core_0041/02_COASSEMBLY/S1-S8-final.contigs.fa -o scotianbasin_VK_PRJNA598277_gene.coords.gbk -a scotianbasin_VK_PRJNA598277.faa -d scotianbasin_VK_PRJNA598277.fna -p meta >& scotianbasin_VK_PRJNA598277.prodigal.log.txt
+
+python3 /gpfs/home/vmkhot/scripts/PyScripts/samtofastq.py -l /gpfs/home/ahawley/BIOREACTOR/NANOPORE/MAPPING/Ammonia_mapp/pull_cyano_remap/cyano_contig -s /gpfs/home/ahawley/BIOREACTOR/NANOPORE/MAPPING/Ammonia_mapp/Ammonia_nanoMerged.sam -f1 /gpfs/ebg_work/mataeian/NextSeq_run180805/Bioreactor_metagenomes/c_8_6_Ammonium/C_8_6_Ammonium.qc.1.fastq -f2 /gpfs/ebg_work/mataeian/NextSeq_run180805/Bioreactor_metagenomes/c_8_6_Ammonium/C_8_6_Ammonium.qc.2.fastq -o1 cyano_contigs_pulled_reads.qc.1.fastq -o2 cyano_contigs_pulled_reads.qc.2.fastq
+
+
+
+
+nohup makeblastdb -in cyanoWGS_CRISPRs.ffn -parse_seqids -blastdb_version 5 -out cyanoWGS_CRISPRs.ffn -dbtype nucl&
+
+blastn -db active_crispr5.fasta_spacers.fa.3 -query active_crispr5.fasta_spacers.fa.2 -out biroeactor_WGS_spacers_blastn.out -outfmt 6
+
+blastn -db ~/bioreactor/CRISPR_Cas_Analysis/cyanoWGS/cyanoWGS_CRISPRs.ffn -query AF_day0_spacers.fa -out ~/bioreactor/CRISPR_Cas_Analysis/cyanoWGS/blastn_spacer_results/AF_day0_spacers_v_cyanoWGScrisprs_blastn.out -outfmt 6&
+
+blastn -db ~/bioreactor/metaerg_out/bioreactor_cds.ffn -query bioreactor_double_spacers.fa -out double_spacers_cds_blastn.out -outfmt 6
+
+
+perl /gpfs/ebg_data/programs/CRISPRDetect_2_2_1/CRISPRDetect.pl -f total_CRISPRs_bin00_WGS.fasta -o bin00_crisprdetect.txt -array_quality_score_cutoff 3 -T 10 > test.log
+
+python ~/CRISPRStudio/CRISPR_Studio_1.0.py -i bin00_crisprdetect.txt.gff -s DistMatrix -c 3
+
+
+for f in *deduped.tblout; do file=$(basename $f .tblout);awk -v a=${file} '{if ($11 >= 0.8) print a,'\t',$0;}' < ${file}.tblout >> cat_MG_hmmsearch_result_norCutoff_0.8.tblout ; done
+
+bsub -n 10 -J hmmsearch -w "done(prodigal)" bash lsf_hmmsearch.sh
+
+
+
+nohup hmmsearch --cpu 10 --tblout hmmsearch_diamond_AlmA_new.tbl almA_new.hmm catdiamond_AlkB_LadA_AlmA_CYP153.uniques.fasta&
+
+for file in *.tblout; do name=$(basename $file tblout);python3 ../../remove_duplicate_genes.py $file ${name}_deduped.tblout; done

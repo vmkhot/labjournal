@@ -1,0 +1,79 @@
+FIND
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+find /dir -name "pattern*.fa" -type f printf "%f\n"
+#to find all paths
+find /export/home/vmkhot/Crassout/bioreactor_merged/MappedReads -name "*_2.fastq" > reads2.txt
+#to find only file names
+find /export/home/vmkhot/Crassout/bioreactor_merged/MappedReads -name "*_1.fastq" -type f -printf "%f\n" > reads1.csv
+
+REPLACE STRING
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+tr 'original' 'new' < input.txt > output.txt
+tr '\n' ',' < reads1.csv > reads_1.txt
+
+EXTRACT NUMBERS INTO VARIABLE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+groups=($(ls Crassout/bioreactor_merged/MappedReads/fastq/ | sed 's/mapped//' |sed 's/_[0-9].fastq//'|sort -u))
+
+
+RENAME FILES one liner
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+for filename in ./*; do mv "./$(ls "$filename" | sed -e 's/_fix//g')"; done
+mv: missing destination file operand after ‘././mapped1346_1.fastq’
+
+EXTRACT 2ND COLUMN FROM A FILE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+awk '{print $2}' all_assembly.txt > temp.txt
+
+GREP STRINGS FROM FILE1 TO FILE2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+while read p; do
+        grep $p /export/home/vmkhot/Crassout/bioreactor/assemblydb/bioreactor_assembly.fasta |awk '{print $p "\t" $2}'
+
+done < /export/home/vmkhot/Crassout/bioreactor/MappedReads/BlastResults/temp.txt
+
+
+LOOP COMMAND OVER FILE CONTENTS (LINE BY LINE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+while IFS= read -r line; do echo "$line"; done < file.txt
+
+LINES BETWEEN TWO PATTERNS FOR SEQUENCE DATA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sed -n '/>3300011187_____Ga0136596_1000009/,/>3300011187_____Ga0136596_1004223/p' Virus/VirSorter2/IMG_VR/IMG_VR_2018-07-01_4/IMGVR_all_nucleotides.fna
+
+SEARCH STRINGS FROM FILTER.TXT AGAINST COLUMN 2 IN DATA.TXT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+awk -F "\t" 'FNR==NR {hash[$0]; next} !($2 in hash)' FILTER.TXT DATA.TXT > RESULTS.OUT
+
+SPLIT MULTILINE FASTA INTO INDIVIDUAL FILES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+awk -F '|' '/^>/ {F=sprintf("%s.fasta",$2); print > F;next;} {print >> F;}' < cyanoWGS_CRISPRs.fasta
+
+MULTILINE FASTA TO SINGLELINE FASTA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+awk '/^>/ {printf("%s%s\t",(N>0?"\n":""),$0);N++;next;} {printf("%s",$0);} END {printf("\n");}' < input.fa > output.tsv
+
+tr "\t" "\n" < output.tsv
+
+ awk '/^>/ {printf("\n%s\n",$0);next; } { printf("%s",$0);}  END {printf("\n");}' < input.faa > output.singleline.faa
+
+UPDATE FASTA HEADERS WITH FILE NAME
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+for f in *.fasta; do file=$(basename $f .fasta); awk -v a=${file} '/^>/{print ">" a "." ++i ; next}{print}' < ${file}.fasta > ${file}.new.fasta; done
+
+FILTER BY COLUMN 11, PRINT FILE NAME TO FIRST COLUMN AND CONCATENATE ALL FILES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+for f in *deduped.tblout; do file=$(basename $f .tblout);awk -v a=${file} '{if ($11 >= 0.8) print a,'\t',$0;}' < ${file}.tblout >> cat_MG_hmmsearch_result_norCutoff_0.8.tblout ; done
+
+DOWNLOADING FROM IMG TO SERVER
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#1. sign in
+curl 'https://signon.jgi.doe.gov/signon/create' --data-urlencode 'login=vmkhot@ucalgary.ca' --data-urlencode 'password=Apples123' -c cookies > /dev/null
+
+#2. find the url of the file. This is in the XML file in the downloading area
+"portal/ext-api/downloads/get_tape_file?blocking=true&url=/IMG_3300005725/        73 download/_JAMO/55e68d260d878556782dbe70/65942.assembled.faa"
+
+#3. Download using curl
+curl 'https://genome.jgi.doe.gov/portal/ext-api/downloads/get_tape_file?blocking=true&url=/IMG_3300005725/
+download/_JAMO/55e68d260d878556782dbe70/65942.assembled.faa' -b cookies > napthalene_enriched_DWH_VK_3300005725.faa
+

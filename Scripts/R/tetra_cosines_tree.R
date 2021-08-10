@@ -1,0 +1,22 @@
+library(reshape2)
+library(ape)
+library(phangorn)
+library(dplyr)
+library(tidyr)
+library(cowplot)
+library(ggplot2)
+library(gplots)
+library(dendextend)
+
+setwd("./Virus Research/ForUSB/Virus_visuals/")
+f <- read.delim("./tetra_cosines_hosts.csv", header=TRUE,se="\t")
+
+#filter and dendrogram of just the bins_dataset
+f_bins <-filter(f,!grepl('virus',Bin1),grepl('virus',Bin2))
+f_bins_mat <- acast(f_bins,Bin1 ~ Bin2,value.var = 'Cosine',fun.aggregate=mean)
+f_bins_mat <- replace_na(f_bins_mat,0)
+d <- dist(f_bins_mat,method="euclidean")
+h <- hclust(d, method = "complete")
+plot(h)
+tree <- as.phylo(h)
+write.tree(phy=tree, file='tetra_cosines.tre')

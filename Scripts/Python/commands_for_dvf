@@ -1,0 +1,5 @@
+ncbi-genome-download -t batch_entrez_host_taxids -l complete,chromosome bacteria -F fasta -n -o host_genomes -s genbank
+
+python ~/DeepVirFinder/training.py -l 1000 -i ./tr/encode -j ./val/encode -o ./models -f 10 -n 500 -d 500 -e 10
+
+python ~/DeepVirFinder/dvf.py -i ~/bioreactor/assemblydb/bioreactor_assembly.fa -o ./test_output -l 1000 -m ./models

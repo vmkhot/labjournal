@@ -1,0 +1,2 @@
+#making dot plot with varying dot sizes based on # of reads
+ggplot(data=crisprs,mapping=aes(Bin,CRISPR.Group,size=X.Reads,)) + geom_point(aes(color=crisprs$Bin)) +scale_size_continuous(breaks=c(0,100,10000),range=c(2,10))
