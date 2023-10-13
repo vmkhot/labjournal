@@ -4,11 +4,10 @@ library(dendextend)
 library(dplyr)
 library(tidyr)
 library(vegan)
-library(dendextend)
 library(cowplot)
 
-setwd("/home/varadakhot/Documents/R_Practice/")
-f <- read.delim("./pwa_viral_contigs.txt", header=TRUE,sep="\t")
+setwd("C:\Users\varde\Documents\Virus Research\viral_prop_mgs")
+f <- read.delim("../../../", header=TRUE,sep="\t")
 f[c(3)] <- lapply(f[3],function(x) 1/x)
 is.na(f) <- sapply(f, is.infinite)
 #create matrix from the list using acast from reshape2
