@@ -41,7 +41,7 @@ $ tar -zvxf all.faa.tar.gz -C ./Viral_genes/
 $ gunzip File1.txt.gz
 ```
 
-### Parallel downloads of databases
+##### Parallel downloads of databases
 
 [Aria2](https://github.com/aria2/aria2?tab=readme-ov-file) is an excellent tool for this. Multithread with slurm
 
