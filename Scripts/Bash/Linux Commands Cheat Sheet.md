@@ -41,6 +41,35 @@ $ tar -zvxf all.faa.tar.gz -C ./Viral_genes/
 $ gunzip File1.txt.gz
 ```
 
+### Parallel downloads of databases
+
+[Aria2](https://github.com/aria2/aria2?tab=readme-ov-file) is an excellent tool for this. Multithread with slurm
+
+```
+
+#!/bin/bash
+#SBATCH --job-name=ftp      		# Job name
+#SBATCH --nodes=1                    	# Run all processes on 1 node
+#SBATCH --cpus-per-task=15            	# Number of CPU cores per task
+#SBATCH --mem=10G                    	# Job memory request
+#SBATCH --partition=standard,short,long,fat
+#SBATCH --output=ftp_%j.log     	# Standard output and error log
+
+#SBATCH --mail-user=email@email     	# email user
+#SBATCH --mail-type=BEGIN               # email when job begins
+#SBATCH --mail-type=END                 # email when job ends
+
+echo "downloading from mgnify ftp"
+
+/home/ri65fin/Programs/aria2/src/aria2c -i ftp_urls.list -d ./ -j 15 -l log.txt
+# -i : txt file of URLs
+# -d : output directory
+# -j : threads
+# -l : log file, is very verbose
+# -s : split each file into many - for the case that you have to download 1 massive file, split into 15 chunks
+
+```
+
 ### Find files
 
 ##### Listing files
